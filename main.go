@@ -5,14 +5,16 @@ import (
 )
 
 func main() {
-	elements := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
+	data := []int{99, 27, 1, 56, 88, 3, 9, 73, 13, 11}
 
-	re1 := MyMergeSort2(elements)
-	fmt.Print(re1)
+	data = MergeSortRecursive(data)
+	fmt.Printf("sorted data: %v\n", data)
+
+	fmt.Printf("target index: %v\n", BinarySearch(data, 100))
 }
 
 // 遞歸作法
-func MyMergeSort2(inputData []int) []int {
+func MergeSortRecursive(inputData []int) []int {
 
 	if len(inputData) < 2 {
 		return inputData
@@ -20,13 +22,13 @@ func MyMergeSort2(inputData []int) []int {
 
 	var middle = len(inputData) / 2
 	// 經由上面的if判斷式，只剩一個element時，就不會再切分
-	var a = MyMergeSort2(inputData[:middle])
-	var b = MyMergeSort2(inputData[middle:])
+	var a = MergeSortRecursive(inputData[:middle])
+	var b = MergeSortRecursive(inputData[middle:])
 	return MyMergeFunc(a, b)
 }
 
 // 迭代作法
-func MyMergeSort(inputData []int) []int {
+func MergeSortIterate(inputData []int) []int {
 	l := len(inputData)
 	fmt.Printf("len: %v\n", l)
 	arrarr := make([][]int, 0, l)
@@ -119,7 +121,7 @@ func MyMergeFunc(arr1 []int, arr2 []int) (result []int) {
 }
 
 // 遞歸作法example
-func merge(array1 []int, array2 []int) []int {
+func MergeExample(array1 []int, array2 []int) []int {
 	var result = make([]int, len(array1)+len(array2))
 	var i = 0
 	var j = 0
@@ -151,7 +153,7 @@ func merge(array1 []int, array2 []int) []int {
 	return result
 }
 
-func Mergesort(items []int) []int {
+func MergeSortRecursiveExample(items []int) []int {
 	fmt.Printf("all items: %v\n", items)
 	// 傳入array的長度只有1或0時，就直接回傳
 	if len(items) < 2 {
@@ -161,7 +163,80 @@ func Mergesort(items []int) []int {
 
 	var middle = len(items) / 2
 	// 經由上面的if判斷式，只剩一個element時，就不會再切分
-	var a = Mergesort(items[:middle])
-	var b = Mergesort(items[middle:])
-	return merge(a, b)
+	var a = MergeSortRecursiveExample(items[:middle])
+	var b = MergeSortRecursiveExample(items[middle:])
+	return MergeExample(a, b)
+}
+
+func BinarySearch(data []int, key int) (index int) {
+	fmt.Printf("BinarySearch sorted data: %v, target data: %v\n", data, key)
+	low := 0
+	upper := len(data) - 1
+
+	// 閉區間
+	// 等於的時候要在比較一次該數值
+	for low <= upper {
+		// 無條件捨去，只取商數
+		// low: 0, upper: 11, targetIndex會等於5
+		targetIndex := (low + upper) / 2
+		fmt.Printf("low: %v, upper: %v, targetIndex: %v\n", low, upper, targetIndex)
+
+		if low == upper {
+			v := data[targetIndex]
+			if v == key {
+				return targetIndex
+			}
+			// 找不到正確資料，回傳相差最小的資料
+			// 比較此時的target index的值，如果比target小，那就要找target index + 1 中的值再比一次，比較大則相反
+			switch {
+			case v == key:
+				return targetIndex
+			case v < key:
+				// avoid out of slice index
+				if targetIndex+1 > len(data)-1 {
+					return targetIndex
+				}
+				// 如果 v < key，就要再找一個比key大的，形成 v < key < v2，再比大小
+				v2 := data[targetIndex+1]
+				if key-v > v2-key {
+					// v2和key相差的值最小，回傳v2的index值
+					return targetIndex + 1
+				} else {
+					return targetIndex
+				}
+			case v > key:
+				// avoid out of slice index
+				if targetIndex-1 < 0 {
+					return targetIndex
+				}
+				// 如果 v > key，就要再找一個比key小的，形成 v2 < key < v，再比大小
+				v2 := data[targetIndex-1]
+				if v-key > key-v2 {
+					// v2和key相差的值最小，回傳v2的index值
+					return targetIndex - 1
+				} else {
+					return targetIndex
+				}
+			}
+		}
+
+		// targetIndex +- 1，target Index的值已經比較過，就直接排除掉。
+		switch {
+		case data[targetIndex] == key:
+			// 重複值 todo
+			return targetIndex
+		case data[targetIndex] > key:
+			upper = targetIndex - 1
+			fmt.Printf("data[targetIndex] %v > targetData %v , upper: %v\n", data[targetIndex], key, upper)
+		case data[targetIndex] < key:
+			low = targetIndex + 1
+			fmt.Printf("data[targetIndex] %v < targetData %v , low: %v\n", data[targetIndex], key, low)
+		}
+		fmt.Printf("for loop process over low: %v, upper: %v\n\n", low, upper)
+	}
+	// fmt.Printf("final low: %v, upper: %v\n", low, upper)
+	// fmt.Print("data not found\n")
+
+	// return low
+	return -1
 }
