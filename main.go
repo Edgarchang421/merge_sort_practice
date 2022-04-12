@@ -5,12 +5,14 @@ import (
 )
 
 func main() {
-	data := []int{99, 27, 1, 56, 88, 3, 9, 73, 13, 11}
+	data := []int{22, 99, 27, 175, 300, 201, 1, 22, 56, 88, 3, 176, 22, 9, 73, 13, 11, 22, 143, 88}
 
 	data = MergeSortRecursive(data)
 	fmt.Printf("sorted data: %v\n", data)
 
-	fmt.Printf("target index: %v\n", BinarySearch(data, 100))
+	l, r := RepeatValueBinarySearch(data, 88)
+	// fmt.Printf("target index: %v\n", BinarySearch(data, 22))
+	fmt.Printf("left index: %v\nright index: %v\n", l, r)
 }
 
 // 遞歸作法
@@ -239,4 +241,44 @@ func BinarySearch(data []int, key int) (index int) {
 
 	// return low
 	return -1
+}
+
+func RepeatValueBinarySearch(data []int, key int) (leftIndex int, rightIndex int) {
+	low := 0
+	upper := len(data) - 1
+	fmt.Printf("BinarySearch sorted data: %v, target data: %v, len: %v\n", data, key, len(data))
+
+	// 先找到重複的target value最小的index
+	for low <= upper {
+		mi := (low + upper) / 2
+		switch {
+		case data[mi] < key:
+			low = mi + 1
+		// 等於的時候也要往左移動upper index，因為最終要找的是>=target data中最小的index，直到不等於key值，再加一回去就是index值最小的重複值
+		case data[mi] >= key:
+			upper = mi - 1
+		}
+	}
+	// leftIndex = upper + 1
+	leftIndex = low
+
+	low2 := 0
+	upper2 := len(data) - 1
+
+	// 找到不等於重複的target value最小的index
+	for low2 <= upper2 {
+		mi := (low2 + upper2) / 2
+		switch {
+		// 等於的時候也要往右移動index(加一)，直到不等於key值，再減一回去就是index值最小的重複值
+		case data[mi] <= key:
+			low2 = mi + 1
+		case data[mi] > key:
+			upper2 = mi - 1
+		}
+	}
+	// rightIndex = low2 - 1
+	rightIndex = upper2
+
+	// 再找到大於target value最小的index
+	return
 }
