@@ -36,6 +36,7 @@ func BenchmarkMergeSortIterateCleans(b *testing.B) {
 }
 
 /*
+go test -bench. -benchmem.
 goos: windows
 goarch: amd64
 pkg: marge_sort
