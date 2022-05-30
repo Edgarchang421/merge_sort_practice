@@ -17,7 +17,6 @@ func main() {
 
 // 遞歸作法
 func MergeSortRecursive(inputData []int) []int {
-
 	if len(inputData) < 2 {
 		return inputData
 	}
@@ -27,6 +26,77 @@ func MergeSortRecursive(inputData []int) []int {
 	var a = MergeSortRecursive(inputData[:middle])
 	var b = MergeSortRecursive(inputData[middle:])
 	return MyMergeFunc(a, b)
+}
+
+// 將兩個排序好的array合併，只有比較第一個element
+func MyMergeFunc(arr1 []int, arr2 []int) (result []int) {
+	times := len(arr1) + len(arr2)
+	for i := 0; i < times; i++ {
+		// fmt.Printf("arr1: %v arr2: %v\n", arr1, arr2)
+		if arr1[0] < arr2[0] {
+			// 新增至result
+			result = append(result, arr1[0])
+			// 移除至原本arr
+			arr1 = arr1[1:]
+		} else {
+			// 新增至result
+			result = append(result, arr2[0])
+			// 移除至原本arr
+			arr2 = arr2[1:]
+		}
+
+		// fmt.Printf("arr1: %v\n", arr1)
+		// fmt.Printf("arr2: %v\n", arr2)
+
+		// 移除玩array中的第一個資料後，避免下次 index out of range
+		// 其中一個 out of range 就 break for loop
+		if len(arr1) == 0 {
+			result = append(result, arr2...)
+			// fmt.Printf("arr1 len = 0, result: %v\n", result)
+			break
+		}
+		if len(arr2) == 0 {
+			result = append(result, arr1...)
+			// fmt.Printf("arr2 len = 0, result: %v\n", result)
+			break
+		}
+
+		// fmt.Printf("temp result: %v\n", result)
+	}
+
+	return
+}
+
+func MergeSortRecursiveClean(inputData []int) []int {
+	if len(inputData) < 2 {
+		return inputData
+	}
+	var middle = len(inputData) / 2
+	var a = MergeSortRecursiveClean(inputData[:middle])
+	var b = MergeSortRecursiveClean(inputData[middle:])
+	return MyMergeFuncClean(a, b)
+}
+
+func MyMergeFuncClean(arr1 []int, arr2 []int) (result []int) {
+	times := len(arr1) + len(arr2)
+	for i := 0; i < times; i++ {
+		if arr1[0] < arr2[0] {
+			result = append(result, arr1[0])
+			arr1 = arr1[1:]
+		} else {
+			result = append(result, arr2[0])
+			arr2 = arr2[1:]
+		}
+		if len(arr1) == 0 {
+			result = append(result, arr2...)
+			break
+		}
+		if len(arr2) == 0 {
+			result = append(result, arr1...)
+			break
+		}
+	}
+	return
 }
 
 // 迭代作法
@@ -83,43 +153,35 @@ func MergeSortIterate(inputData []int) []int {
 	return arrarr[0]
 }
 
-// 將兩個排序好的array合併，只有比較第一個element
-func MyMergeFunc(arr1 []int, arr2 []int) (result []int) {
-	times := len(arr1) + len(arr2)
-	for i := 0; i < times; i++ {
-		fmt.Printf("arr1: %v arr2: %v\n", arr1, arr2)
-		if arr1[0] < arr2[0] {
-			// 新增至result
-			result = append(result, arr1[0])
-			// 移除至原本arr
-			arr1 = arr1[1:]
-		} else {
-			// 新增至result
-			result = append(result, arr2[0])
-			// 移除至原本arr
-			arr2 = arr2[1:]
-		}
-
-		// fmt.Printf("arr1: %v\n", arr1)
-		// fmt.Printf("arr2: %v\n", arr2)
-
-		// 移除玩array中的第一個資料後，避免下次 index out of range
-		// 其中一個 out of range 就 break for loop
-		if len(arr1) == 0 {
-			result = append(result, arr2...)
-			// fmt.Printf("arr1 len = 0, result: %v\n", result)
-			break
-		}
-		if len(arr2) == 0 {
-			result = append(result, arr1...)
-			// fmt.Printf("arr2 len = 0, result: %v\n", result)
-			break
-		}
-
-		fmt.Printf("temp result: %v\n", result)
+func MergeSortIterateClean(inputData []int) []int {
+	l := len(inputData)
+	arrarr := make([][]int, 0, l)
+	for _, v := range inputData {
+		arrarr = append(arrarr, []int{v})
 	}
-
-	return
+	for l != 1 {
+		newArray := make([][]int, 0, l/2+1)
+		for i := 0; i <= l/2; i++ {
+			if l%2 != 0 && 2*i+1 >= l {
+				if len(arrarr) == 2 {
+					break
+				}
+				newArray = append(newArray, arrarr[2*i])
+				break
+			}
+			if l%2 == 0 && 2*i+1 >= l {
+				if len(arrarr) == 2 {
+					break
+				}
+				break
+			}
+			margedArray := MyMergeFuncClean(arrarr[2*i], arrarr[2*i+1])
+			newArray = append(newArray, margedArray)
+		}
+		arrarr = newArray
+		l = len(arrarr)
+	}
+	return arrarr[0]
 }
 
 // 遞歸作法example
