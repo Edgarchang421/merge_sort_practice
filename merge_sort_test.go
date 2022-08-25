@@ -2,8 +2,11 @@ package main
 
 import (
 	"sort"
+	"strings"
 	"testing"
 )
+
+const testStr = "html5-video-player ytp-transparent ytp-exp-bottom-control-flexbox ytp-exp-ppp-update ytp-fit-cover-video ytp-autonav-endscreen-cancelled-state ytp-hide-info-bar paused-mode"
 
 func TestMergeSort(t *testing.T) {
 	nums := []int{10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0}
@@ -19,18 +22,47 @@ func TestMergeSort(t *testing.T) {
 	// write some test
 }
 
-func BenchmarkMergeSortRecursiveClean(b *testing.B) {
+// func BenchmarkMergeSortRecursiveClean(b *testing.B) {
+// 	b.ResetTimer()
+// 	for i := 0; i < b.N; i++ {
+// 		MergeSortRecursiveClean([]int{22, 99, 27, 175, 300, 201, 1, 22, 56, 88, 3, 176, 22, 9, 73, 13, 11, 22, 143, 88})
+// 	}
+// 	b.StopTimer()
+// }
+
+// func BenchmarkMergeSortIterateCleans(b *testing.B) {
+// 	b.ResetTimer()
+// 	for i := 0; i < b.N; i++ {
+// 		MergeSortIterateClean([]int{22, 99, 27, 175, 300, 201, 1, 22, 56, 88, 3, 176, 22, 9, 73, 13, 11, 22, 143, 88})
+// 	}
+// 	b.StopTimer()
+// }
+
+func BenchmarkStringsSplit(b *testing.B) {
+	// pausedCollector := 0
+	// playingCollector := 0
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		MergeSortRecursiveClean([]int{22, 99, 27, 175, 300, 201, 1, 22, 56, 88, 3, 176, 22, 9, 73, 13, 11, 22, 143, 88})
+		strs := strings.Split(testStr, " ")
+		for i := range strs {
+			switch strs[i] {
+			case "paused-mode", "unstarted-mode":
+			case "playing-mode":
+			}
+		}
 	}
 	b.StopTimer()
 }
-
-func BenchmarkMergeSortIterateCleans(b *testing.B) {
+func BenchmarkStringsContains(b *testing.B) {
+	// pausedCollector := 0
+	// playingCollector := 0
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		MergeSortIterateClean([]int{22, 99, 27, 175, 300, 201, 1, 22, 56, 88, 3, 176, 22, 9, 73, 13, 11, 22, 143, 88})
+		if strings.Contains(testStr, "paused-mode") || strings.Contains(testStr, "unstarted-mode") {
+
+		} else if strings.Contains(testStr, "playing-mode") {
+
+		}
 	}
 	b.StopTimer()
 }
